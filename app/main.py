@@ -1,3 +1,4 @@
+from flask import request, render_template
 from app.extensions import JSONFlask, jwt, db
 from app.util import ApiResponse
 
@@ -9,10 +10,9 @@ def create_app(config=None):
   db.init_app(app)
   jwt.init_app(app)
 
-  @app.route('/')
-  def index():
-    res = ApiResponse()
-    res.data = 'Hello, You!'
-    return res
+  @app.route('/', defaults={'path': ''})
+  @app.route('/<path:path>')
+  def catch_all(path):
+      return app.send_static_file("index.html")
 
   return app
