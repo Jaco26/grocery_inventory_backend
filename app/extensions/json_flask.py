@@ -38,7 +38,8 @@ class CustomJSONEncoder(JSONEncoder):
 def create_error_api_response(error):
   res = ApiResponse()
   res.status = error.code if isinstance(error, HTTPException) else 500
-  res.msg = str(error)
+  res.pub_msg = str(error)
+  res.pvt_msg = str(error)
   return res
 
 

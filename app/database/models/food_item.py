@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy.dialects.postgresql import UUID, DATE
 
 from app.database.db import db
-from app.database.mixins import BaseMixin
+from app.database.mixins import TimestampMixin
 
 
-class FoodItem(BaseMixin, db.Model):
+class FoodItem(TimestampMixin, db.Model):
   stock_id = db.Column(UUID(as_uuid=True), db.ForeignKey('stock.id'))
   food_kind_id = db.Column(UUID(as_uuid=True), db.ForeignKey('food_kind.id'))
   date_item_was_new = db.Column(DATE(), default=datetime.utcnow)

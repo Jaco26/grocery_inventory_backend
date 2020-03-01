@@ -11,3 +11,8 @@ class FoodKind(BaseMixin, db.Model):
   categories = db.relationship('FoodCategory', secondary='food_kind_category', lazy='subquery',
                               backref=db.backref('food_kinds', lazy=True))
   
+  def full_dict(self):
+    return {
+      **self.cols_dict(),
+      'categories': self.categories,
+    }
