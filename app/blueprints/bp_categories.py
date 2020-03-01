@@ -54,7 +54,7 @@ def food_category(category_id=''):
 @categories_bp.route('/food/kind', methods=['GET', 'POST'])
 @categories_bp.route('/food/kind/<kind_id>', methods=['PUT', 'DELETE'])
 @jwt_required
-def food_category(kind_id=''):
+def food_kind(kind_id=''):
   res = ApiResponse()
   try:
     if request.method == 'GET':

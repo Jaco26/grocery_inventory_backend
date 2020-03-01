@@ -37,7 +37,7 @@ def login():
     app_user = AppUser.get_by_username(body['username'])
     if app_user:
       res.data = {
-        'username', app_user.username,
+        'username': app_user.username,
         'access_token': create_access_token(identity=app_user.id)
       }
       res.status = 200
@@ -54,7 +54,7 @@ def login():
 @account_bp.route('/logout', methods=['POST'])
 @jwt_required
 def logout():
- res = ApiResponse()
+  res = ApiResponse()
   try:
     revoked_token = RevokedToken(jti=get_raw_jwt()['jti'])
     revoked_token.save()

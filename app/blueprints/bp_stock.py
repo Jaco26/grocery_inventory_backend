@@ -67,7 +67,7 @@ def stock_item(stock_id='', item_id=''):
       body = should_look_like(food_item_schema)
       stock = Stock.query.get_or_404(stock_id)
       if stock.user_id == get_jwt_identity():
-        food_item = FoodItem({ 'stock_id', stock_id, **body })
+        food_item = FoodItem({ 'stock_id': stock_id, **body })
         food_item.save()
         res.status = 201
       else:
