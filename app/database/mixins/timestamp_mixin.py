@@ -5,4 +5,4 @@ from app.database.mixins import BaseMixin
 
 class TimestampMixin(BaseMixin):
   date_created = db.Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-  date_updated = db.Column(TIMESTAMP(timezone=True), onupdare=datetime.utcnow)
+  date_updated = db.Column(TIMESTAMP(timezone=True), onupdate=datetime.utcnow)

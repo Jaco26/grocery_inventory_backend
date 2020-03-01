@@ -6,4 +6,3 @@ from app.database.mixins import TimestampMixin
 
 class Stock(TimestampMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))
-  current_snapshot_id = db.Column(UUID(as_uuid=True), db.ForeignKey('snapshot.id'))
