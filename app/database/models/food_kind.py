@@ -5,8 +5,9 @@ from app.database.mixins import BaseMixin
 
 class FoodKind(BaseMixin, db.Model):
   name = db.Column(db.String, nullable=False)
-  category_id = db.Column(UUID(as_uuid=True), db.ForeignKey('food_category.id'))
-  nutrition_info = db.Column(JSON(none_as_null=none_as_null=True))
+  nutrition_info = db.Column(JSON(none_as_null=True))
   notes = db.Column(db.String)
   
+  categories = db.relationship('FoodCategory', secondary='food_kind_category', lazy='subquery',
+                              backref=db.backref('food_kinds', lazy=True))
   

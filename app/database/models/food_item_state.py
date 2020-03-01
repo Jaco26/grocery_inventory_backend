@@ -10,5 +10,9 @@ class FoodItemState(TimestampMixin, db.Model):
   packaging_state_id = db.Column(UUID(as_uuid=True), db.ForeignKey('packaging_state.id'))
   number_of_servings = db.Column(db.Integer, default=0)
   weight = db.Column(db.Integer, default=0)
-  # has 'backref'ed relationship field 'food_item'
+  
+  # has lazy loaded 'backref'ed relationship field 'food_item'
+
+  packaging_kind = db.relationship('PackagingKind', lazy='joined')
+  packaging_state = db.relationship('PackagingState', lazy='joined')
 

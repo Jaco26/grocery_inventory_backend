@@ -12,4 +12,9 @@ class FoodItem(BaseMixin, db.Model):
   date_item_was_new = db.Column(DATE(), default=datetime.utcnow)
   expiration_date = db.Column(DATE(), nullable=False)
 
-  state = db.relationship('FoodItemState', backref='food_item', lazy='joined') # lazy=False/'joined'
+  # 'state' field in FoodItem instance is sqlalchemy query object which can
+  # be used to specify whether or not to grab all previous 'FoodItemState's (a lot)
+  # or just the most recent one...or something else
+  state = db.relationship('FoodItemState', lazy='dynamic', backref=db.backref('food_item', lazy=True))
+  food_kind = db.relationship('FoodKind', lazy='joined')
+  
