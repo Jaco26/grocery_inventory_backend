@@ -8,8 +8,9 @@ from app.database.junction_tables import *
 from app.blueprints import (
   account_bp,
   categories_bp,
-  food_item_bp,
+  food_item_state_bp,
   stock_bp,
+  snapshot_bp,
 )
 
 def create_app(config=None):
@@ -22,8 +23,9 @@ def create_app(config=None):
 
   app.register_blueprint(account_bp, url_prefix='/api/v1/account')
   app.register_blueprint(categories_bp, url_prefix='/api/v1/categories')
-  app.register_blueprint(food_item_bp, url_prefix='/api/v1/food_item')
+  app.register_blueprint(food_item_state_bp, url_prefix='/api/v1/food_item_state')
   app.register_blueprint(stock_bp, url_prefix='/api/v1/stock')
+  app.register_blueprint(snapshot_bp, url_prefix='/api/v1/snapshot')
 
   @app.route('/', defaults={'path': ''})
   @app.route('/<path:path>')

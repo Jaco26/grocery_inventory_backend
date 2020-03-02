@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy import desc
 from sqlalchemy.dialects.postgresql import UUID, DATE
 
 from app.database.db import db
@@ -12,9 +13,8 @@ class FoodItem(TimestampMixin, db.Model):
   date_item_was_new = db.Column(DATE(), default=datetime.utcnow)
   expiration_date = db.Column(DATE(), nullable=False)
 
-  # 'state' field in FoodItem instance is sqlalchemy query object which can
+  # 'states' field in FoodItem instance is sqlalchemy query object which can
   # be used to specify whether or not to grab all previous 'FoodItemState's (a lot)
   # or just the most recent one...or something else
-  state = db.relationship('FoodItemState', lazy='dynamic', backref=db.backref('food_item', lazy=True))
+  states = db.relationship('FoodItemState', lazy='dynamic', backref=db.backref('food_item', lazy=True))
   food_kind = db.relationship('FoodKind', lazy='joined')
-  

@@ -16,3 +16,4 @@ class FoodItemState(TimestampMixin, db.Model):
   packaging_kind = db.relationship('PackagingKind', lazy='joined')
   packaging_state = db.relationship('PackagingState', lazy='joined')
 
+  
