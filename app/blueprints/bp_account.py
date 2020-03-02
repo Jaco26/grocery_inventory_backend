@@ -21,11 +21,12 @@ def register():
       res.status = 400
       res.pub_msg = 'Username {} already exists in our system'.format(body['username'])
     else:
-      AppUser({ **body, 'pw_hash': body['password']}).save()
+      AppUser(username=body['username'], pw_hash=body['password']).save()
       res.status = 201
   except HTTPException as exc:
     return exc
   except BaseException as exc:
+    print('EXCEPTION', exc)
     abort(500)
   return res
 
