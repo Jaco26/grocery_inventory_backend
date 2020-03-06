@@ -5,4 +5,4 @@ from app.database.mixins import BaseMixin
 
 class PackagingKind(BaseMixin, db.Model):
   name = db.Column(db.String, nullable=False)
-  
+  uniform_name = db.Column(db.String, nullable=False, unique=True)

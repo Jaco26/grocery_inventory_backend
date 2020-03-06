@@ -5,6 +5,7 @@ from app.database.mixins import BaseMixin
 
 class FoodKind(BaseMixin, db.Model):
   name = db.Column(db.String, nullable=False)
+  uniform_name = db.Column(db.String, nullable=False, unique=True)
   nutrition_info = db.Column(JSON(none_as_null=True))
   notes = db.Column(db.String)
   

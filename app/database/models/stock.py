@@ -6,7 +6,8 @@ from app.database.mixins import TimestampMixin
 
 class Stock(TimestampMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))
-  name = db.Column(db.String, nullable=False, unique=True)
+  name = db.Column(db.String, nullable=False)
+  uniform_name = db.Column(db.String, nullable=False, unique=True)
 
   # each snapshot is a collection of 'food_item_state's. a snapshot
   # represents the state of a 'stock' at a given moment in time

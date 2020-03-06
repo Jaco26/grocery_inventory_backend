@@ -1,7 +1,7 @@
 from flask import Blueprint, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
-from app.util import ApiResponse
+from app.util import ApiResponse, uniform_name
 from app.util.json_validation import create_schema, should_look_like
 from app.database.models import (
   FoodCategory,
@@ -35,6 +35,7 @@ def food_category(category_id=''):
       res.data = [cat for cat in FoodCategory.query.all()]
     elif request.method == 'POST':
       body = should_look_like(food_category_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       cat = FoodCategory(**body)
       cat.save()
       res.status = 201
@@ -49,6 +50,7 @@ def food_category(category_id=''):
     return exc
   except BaseException as exc:
     abort(500)
+  return res
 
 
 @categories_bp.route('/food/kind', methods=['GET', 'POST'])
@@ -61,13 +63,16 @@ def food_kind(kind_id=''):
       res.data = [x.full_dict() for x in FoodKind.query.all()]
     elif request.method == 'POST':
       body = should_look_like(food_kind_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       food_kind = FoodKind(**body)
       food_kind.save()
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(food_kind_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       food_kind = FoodKind.query.get_or_404(kind_id)
       food_kind.name = body['name']
+      food_kind.uniform_name = body['uniform_name']
       food_kind.nutrition_info = body['nutrition_info']
       food_kind.notes = body['notes']
       food_kind.save()
@@ -78,6 +83,7 @@ def food_kind(kind_id=''):
     return exc
   except BaseException as exc:
     abort(500)
+  return res
 
 
 @categories_bp.route('/packaging/kind', methods=['GET', 'POST'])
@@ -89,13 +95,16 @@ def packaging_kind(kind_id=''):
       res.data = [x for x in PackagingKind.query.all()]
     elif request.method == 'POST':
       body = should_look_like(packaging_kind_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       packaging_kind = PackagingKind(**body)
       packaging_kind.save()
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(packaging_kind_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       packaging_kind = PackagingKind.query.get_or_404(kind_id)
       packaging_kind.name = body['name']
+      packaging_kind.uniform_name = body['uniform_name']
     elif request.method == 'DELETE':
       packaging_kind = PackagingKind.query.get_or_404(kind_id)
       packaging_kind.delete()
@@ -103,3 +112,4 @@ def packaging_kind(kind_id=''):
     return exc
   except BaseException as exc:
     abort(500)
+  return res
