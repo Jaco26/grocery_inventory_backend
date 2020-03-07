@@ -39,7 +39,7 @@ def login():
     if app_user:
       res.data = {
         'username': app_user.username,
-        'access_token': create_access_token(identity=app_user.id)
+        'access_token': create_access_token(identity=app_user.id, expires_delta=False)
       }
       res.status = 200
     else:

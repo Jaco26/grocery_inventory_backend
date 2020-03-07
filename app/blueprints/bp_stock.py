@@ -2,7 +2,7 @@ from flask import Blueprint, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
 
-from app.util import ApiResponse
+from app.util import ApiResponse, uniform_name
 from app.util.json_validation import (
   create_schema,
   should_look_like,
@@ -25,26 +25,34 @@ food_item_schema = create_schema({
 
 stock_bp = Blueprint('stock_bp', __name__)
 
-@stock_bp.route('/', methods=['POST'])
+@stock_bp.route('/', methods=['GET', 'POST'])
 @stock_bp.route('/<stock_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
 def stock(stock_id=''):
   res = ApiResponse()
   try:
     if request.method == 'GET':
-      stock = Stock.query.get_or_404(stock_id)
-      res.data = {
-        **stock.cols_dict(),
-        'snapshots': [s for s in stock.snapshots.all()]
-      }
+      if stock_id:
+        stock = Stock.query.get_or_404(stock_id)
+        res.data = stock.full_dict()
+        # res.data = {
+        #   **stock.cols_dict(),
+        #   'snapshots': [s for s in stock.snapshots.all()]
+        # }
+      else:
+        res.data = [s.full_dict() for s in Stock.query.filter_by(user_id=get_jwt_identity()).all()]
     elif request.method == 'POST':
       body = should_look_like(stock_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       stock = Stock(user_id=get_jwt_identity(), **body)
       stock.save()
       res.status = 201
     elif request.method == 'PUT':
+      body = should_look_like(stock_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       stock = Stock.query.get_or_404(stock_id)
       stock.name = body['name']
+      stock.uniform_name = body['uniform_name']
       stock.save()
       res.status = 201
     elif request.method == 'DELETE':

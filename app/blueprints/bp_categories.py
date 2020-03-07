@@ -41,8 +41,11 @@ def food_category(category_id=''):
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(food_category_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
       cat = FoodCategory.query.get_or_404(category_id)
       cat.name = body['name']
+      cat.uniform_name = body['uniform_name']
+      cat.save()
     elif request.method == 'DELETE':
       cat =  FoodCategory.query.get_or_404(category_id)
       cat.delete()
@@ -105,6 +108,7 @@ def packaging_kind(kind_id=''):
       packaging_kind = PackagingKind.query.get_or_404(kind_id)
       packaging_kind.name = body['name']
       packaging_kind.uniform_name = body['uniform_name']
+      packaging_kind.save()
     elif request.method == 'DELETE':
       packaging_kind = PackagingKind.query.get_or_404(kind_id)
       packaging_kind.delete()

@@ -17,3 +17,9 @@ class Stock(TimestampMixin, db.Model):
   # represents the 'food_item's in a 'stock'
   food_items = db.relationship('FoodItem', lazy='joined')
     
+  def full_dict(self):
+    return {
+      **self.cols_dict(),
+      'snapshots': [s for s in self.snapshots.all()],
+      'items': self.food_items
+    }
