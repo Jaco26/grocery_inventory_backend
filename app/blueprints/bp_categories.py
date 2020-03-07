@@ -15,8 +15,8 @@ food_category_schema = create_schema({
 
 food_kind_schema = create_schema({
   'name': str,
-  'nutrition_info': dict,
-  'notes': str,
+  # ('nutrition_info', {}): dict,
+  ('notes', ''): str,
 })
 
 packaging_kind_schema = create_schema({
@@ -76,7 +76,7 @@ def food_kind(kind_id=''):
       food_kind = FoodKind.query.get_or_404(kind_id)
       food_kind.name = body['name']
       food_kind.uniform_name = body['uniform_name']
-      food_kind.nutrition_info = body['nutrition_info']
+      # food_kind.nutrition_info = body['nutrition_info']
       food_kind.notes = body['notes']
       food_kind.save()
     elif request.method == 'DELETE':
@@ -85,6 +85,7 @@ def food_kind(kind_id=''):
   except HTTPException as exc:
     return exc
   except BaseException as exc:
+    print(exc)
     abort(500)
   return res
 
