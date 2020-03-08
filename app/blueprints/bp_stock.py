@@ -14,7 +14,7 @@ stock_schema = create_schema({
   'name': str,
 })
 
-DATE_FMT = '%Y-%M-%D'
+DATE_FMT = '%Y-%m-%d'
 DATE_FMT_MSG = 'Date must be formatted: YYYY-MM-DD'
 
 food_item_schema = create_schema({
@@ -35,10 +35,6 @@ def stock(stock_id=''):
       if stock_id:
         stock = Stock.query.get_or_404(stock_id)
         res.data = stock.full_dict()
-        # res.data = {
-        #   **stock.cols_dict(),
-        #   'snapshots': [s for s in stock.snapshots.all()]
-        # }
       else:
         res.data = [s.full_dict() for s in Stock.query.filter_by(user_id=get_jwt_identity()).all()]
     elif request.method == 'POST':
@@ -74,8 +70,8 @@ def stock_item(stock_id='', item_id=''):
     if request.method == 'POST':
       body = should_look_like(food_item_schema)
       stock = Stock.query.get_or_404(stock_id)
-      if stock.user_id == get_jwt_identity():
-        food_item = FoodItem({ 'stock_id': stock_id, **body })
+      if str(stock.user_id) == get_jwt_identity():
+        food_item = FoodItem(**{ 'stock_id': stock_id, **body })
         food_item.save()
         res.status = 201
       else:
@@ -87,5 +83,6 @@ def stock_item(stock_id='', item_id=''):
   except HTTPException as exc:
     return exc
   except BaseException as exc:
+    print('EXCEPTION', exc)
     abort(500)
   return res

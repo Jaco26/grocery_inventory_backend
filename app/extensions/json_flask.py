@@ -1,5 +1,5 @@
 from uuid import UUID
-from datetime import date, tzinfo, timedelta
+from datetime import date, datetime, tzinfo, timedelta
 
 from flask import Flask
 from flask.json import JSONEncoder
@@ -22,8 +22,10 @@ class SimpleUTC(tzinfo):
 
 class CustomJSONEncoder(JSONEncoder):
   def default(self, obj):
-    if isinstance(obj, date):
+    if isinstance(obj, datetime):
       return obj.replace(tzinfo=SimpleUTC()).isoformat()
+    elif isinstance(obj, date):
+      return obj.isoformat()
     elif isinstance(obj, timedelta):
       return str(obj)
     elif isinstance(obj, UUID):
