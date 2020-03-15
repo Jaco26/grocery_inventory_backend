@@ -76,7 +76,7 @@ def food_kind(kind_id=''):
       food_kind.uniform_name = body['uniform_name']
       food_kind.save()
     elif request.method == 'DELETE':
-      food_kind = FoodKind.query.get_or_404(category_id)
+      food_kind = FoodKind.query.get_or_404(kind_id)
       food_kind.delete()
   except HTTPException as exc:
     return exc

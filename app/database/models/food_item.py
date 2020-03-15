@@ -18,3 +18,10 @@ class FoodItem(TimestampMixin, db.Model):
   # or just the most recent one...or something else
   states = db.relationship('FoodItemState', lazy='dynamic', backref=db.backref('food_item', lazy=True))
   food_kind = db.relationship('FoodKind', lazy='joined')
+
+  def full_dict(self):
+    return {
+      **self.cols_dict(),
+      'food_kind': self.food_kind,
+      'states': [s.full_dict() for s in self.states.all()]
+    }

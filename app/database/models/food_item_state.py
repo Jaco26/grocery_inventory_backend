@@ -16,4 +16,10 @@ class FoodItemState(TimestampMixin, db.Model):
   packaging_kind = db.relationship('PackagingKind', lazy='joined')
   packaging_state = db.relationship('PackagingState', lazy='joined')
 
-  
+  def full_dict(self):
+    remove = ['packaging_kind_id', 'packaging_state_id']
+    return {
+      **{ key: getattr(self, key) for key in self.cols_dict().keys() if key not in remove },
+      'packaging_kind': self.packaging_kind,
+      'packaging_state': self.packaging_state
+    }

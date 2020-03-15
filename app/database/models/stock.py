@@ -21,5 +21,5 @@ class Stock(TimestampMixin, db.Model):
     return {
       **self.cols_dict(),
       'snapshots': [s for s in self.snapshots.all()],
-      'items': self.food_items
+      'items': [item.full_dict() for item in self.food_items]
     }
