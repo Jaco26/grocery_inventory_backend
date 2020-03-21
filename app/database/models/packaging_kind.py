@@ -1,8 +1,6 @@
-from sqlalchemy.dialects.postgresql import UUID
-
 from app.database.db import db
-from app.database.mixins import BaseMixin
+from app.database.mixins import BaseMixin, UserDefinedNameMixin
 
-class PackagingKind(BaseMixin, db.Model):
-  name = db.Column(db.String, nullable=False)
-  uniform_name = db.Column(db.String, nullable=False, unique=True)
+class PackagingKind(BaseMixin, UserDefinedNameMixin, db.Model):
+  def __init__(self, **kwargs):
+    super(PackagingKind, self).__init__(**kwargs)

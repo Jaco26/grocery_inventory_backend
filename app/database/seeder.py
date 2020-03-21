@@ -7,6 +7,7 @@ from app.database.db import db
 from app.database.models import (
   PackagingState,
   PackagingKind,
+  UnitOfMeasurement,
 )
 
 
@@ -14,18 +15,23 @@ from app.database.models import (
 @with_appcontext
 def seed_db():
   db.session.add_all([
-    PackagingKind(name="N/A", uniform_name="n/a"),
-    PackagingKind(name="Prepackaged Glass Jar", uniform_name="prepackaged_glass_jar"),
-    PackagingKind(name="Plastic Produce Bag", uniform_name="plastic_produce_bag"),
-    PackagingKind(name="Mason Jar", uniform_name="mason_jar"),
-    PackagingKind(name="Prepackaged Cardbord Box", uniform_name="prepackaged_cardboard_box"),
+    PackagingKind(name="N/A"),
+    PackagingKind(name="Prepackaged Glass Jar"),
+    PackagingKind(name="Plastic Produce Bag"),
+    PackagingKind(name="Mason Jar"),
+    PackagingKind(name="Prepackaged Cardbord Box"),
   ])
 
   db.session.add_all([
-    PackagingState(name="N/A", uniform_name="n/a"),
-    PackagingState(name="Unopened", uniform_name="unopened"),
-    PackagingState(name="Disgarded", uniform_name="disgarded"),
-    PackagingState(name="Opened", uniform_name="opened"),
+    PackagingState(name="N/A"),
+    PackagingState(name="Unopened"),
+    PackagingState(name="Disgarded"),
+    PackagingState(name="Opened"),
+  ])
+  db.session.add_all([
+    UnitOfMeasurement(name="Self"),
+    UnitOfMeasurement(name="Fluid Oz"),
+    UnitOfMeasurement(name="Oz"),
   ])
 
   db.session.commit()

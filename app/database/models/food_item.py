@@ -23,5 +23,6 @@ class FoodItem(TimestampMixin, db.Model):
     return {
       **self.cols_dict(),
       'food_kind': self.food_kind,
+      'current_state': self.states.order_by('date_created desc').first(),
       'states': [s.full_dict() for s in self.states.all()]
     }

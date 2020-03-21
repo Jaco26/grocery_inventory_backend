@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1e2e5bff5272
+Revision ID: 697159f82a0a
 Revises: 
-Create Date: 2020-03-01 11:37:48.120030
+Create Date: 2020-03-21 13:04:00.366797
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '1e2e5bff5272'
+revision = '697159f82a0a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,38 +30,43 @@ def upgrade():
     op.create_table('food_category',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('uniform_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
     op.create_table('food_kind',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('nutrition_info', postgresql.JSON(none_as_null=True, astext_type=sa.Text()), nullable=True),
-    sa.Column('notes', sa.String(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('uniform_name', sa.String(), nullable=False),
+    sa.Column('unit_of_measurement_id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('units_to_serving_size', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
     op.create_table('packaging_kind',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('uniform_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
     op.create_table('packaging_state',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('uniform_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
-    op.create_table('food_item_state',
+    op.create_table('revoked_token',
+    sa.Column('jti', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.PrimaryKeyConstraint('jti')
+    )
+    op.create_table('unit_of_measurement',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
-    sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
-    sa.Column('food_item_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('packaging_kind_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('packaging_state_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('number_of_servings', sa.Integer(), nullable=True),
-    sa.Column('weight', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['food_item_id'], ['food_kind.id'], ),
-    sa.ForeignKeyConstraint(['packaging_kind_id'], ['packaging_kind.id'], ),
-    sa.ForeignKeyConstraint(['packaging_state_id'], ['packaging_state.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('uniform_name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
     op.create_table('food_kind_category',
     sa.Column('food_kind_id', postgresql.UUID(as_uuid=True), nullable=False),
@@ -70,16 +75,31 @@ def upgrade():
     sa.ForeignKeyConstraint(['food_kind_id'], ['food_kind.id'], ),
     sa.PrimaryKeyConstraint('food_kind_id', 'food_category_id')
     )
+    op.create_table('food_kind_nutrition_info',
+    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('food_kind_id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('calories_per_serving', sa.Integer(), nullable=True),
+    sa.Column('notes', sa.String(), nullable=True),
+    sa.ForeignKeyConstraint(['food_kind_id'], ['food_kind.id'], ),
+    sa.PrimaryKeyConstraint('id', 'food_kind_id')
+    )
     op.create_table('stock',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
     sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('uniform_name', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['app_user.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uniform_name')
     )
     op.create_table('food_item',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
     sa.Column('stock_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('food_kind_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('date_item_was_new', sa.DATE(), nullable=True),
@@ -96,6 +116,19 @@ def upgrade():
     sa.ForeignKeyConstraint(['stock_id'], ['stock.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('food_item_state',
+    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('food_item_id', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('packaging_kind_id', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('packaging_state_id', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('quantity', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['food_item_id'], ['food_item.id'], ),
+    sa.ForeignKeyConstraint(['packaging_kind_id'], ['packaging_kind.id'], ),
+    sa.ForeignKeyConstraint(['packaging_state_id'], ['packaging_state.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('snapshot_food_item_state',
     sa.Column('snapshot_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('food_item_state_id', postgresql.UUID(as_uuid=True), nullable=False),
@@ -109,11 +142,14 @@ def upgrade():
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('snapshot_food_item_state')
+    op.drop_table('food_item_state')
     op.drop_table('snapshot')
     op.drop_table('food_item')
     op.drop_table('stock')
+    op.drop_table('food_kind_nutrition_info')
     op.drop_table('food_kind_category')
-    op.drop_table('food_item_state')
+    op.drop_table('unit_of_measurement')
+    op.drop_table('revoked_token')
     op.drop_table('packaging_state')
     op.drop_table('packaging_kind')
     op.drop_table('food_kind')
