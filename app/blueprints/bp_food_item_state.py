@@ -1,3 +1,4 @@
+from pprint import pprint
 from flask import Blueprint, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
@@ -21,11 +22,13 @@ def food_item_state():
   res = ApiResponse()
   try:
     body = should_look_like(food_item_state_schema)
+    pprint(body)
     food_item_state = FoodItemState(**body)
     food_item_state.save()
     res.status = 201
   except HTTPException as exc:
     return exc
   except BaseException as exc:
+    print(exc)
     abort(500)
   return res

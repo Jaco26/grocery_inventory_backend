@@ -7,6 +7,7 @@ from app.database.models import (
   FoodCategory,
   FoodKind,
   PackagingKind,
+  PackagingState,
 )
 
 food_category_schema = create_schema({
@@ -18,6 +19,10 @@ food_kind_schema = create_schema({
 })
 
 packaging_kind_schema = create_schema({
+  'name': str
+})
+
+packaging_state_schema = create_schema({
   'name': str
 })
 
@@ -109,6 +114,36 @@ def packaging_kind(kind_id=''):
     elif request.method == 'DELETE':
       packaging_kind = PackagingKind.query.get_or_404(kind_id)
       packaging_kind.delete()
+  except HTTPException as exc:
+    return exc
+  except BaseException as exc:
+    abort(500)
+  return res
+
+
+@categories_bp.route('/packaging/state', methods=['GET', 'POST'])
+@categories_bp.route('/packaging/state/<packaging_state_id>', methods=['PUT', 'DELETE'])
+def packaging_state(packaging_state_id=''):
+  res = ApiResponse()
+  try:
+    if request.method == 'GET':
+      res.data = [x for x in PackagingState.query.all()]
+    elif request.method == 'POST':
+      body = should_look_like(packaging_kind_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
+      packaging_state = PackagingState(**body)
+      packaging_state.save()
+      res.status = 201
+    elif request.method == 'PUT':
+      body = should_look_like(packaging_state_schema)
+      body.update({ 'uniform_name': uniform_name(body['name']) })
+      packaging_state = PackagingState.query.get_or_404(packaging_state_id)
+      packaging_state.name = body['name']
+      packaging_state.uniform_name = body['uniform_name']
+      packaging_state.save()
+    elif request.method == 'DELETE':
+      packaging_state = PackagingState.query.get_or_404(packaging_state_id)
+      packaging_state.delete()
   except HTTPException as exc:
     return exc
   except BaseException as exc:

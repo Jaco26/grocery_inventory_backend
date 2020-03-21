@@ -8,5 +8,6 @@ from .food_kind_nutrition_info import FoodKindNutritionInfo
 from .food_item import FoodItem
 from .food_item_state import FoodItemState
 from .food_category import FoodCategory
+from .unit_of_measurement import UnitOfMeasurement
 
 from .revoked_token import RevokedToken
