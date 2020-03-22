@@ -44,8 +44,6 @@ def stock(stock_id=''):
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(stock_schema)
-      body.update({ 'uniform_name': uniform_name(body['name']) })
-      stock = Stock.query.get_or_404(stock_id)
       stock.update_name(body['name'])
       stock.save()
       res.status = 201

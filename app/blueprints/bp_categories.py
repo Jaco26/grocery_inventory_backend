@@ -9,6 +9,7 @@ from app.database.models import (
   PackagingKind,
   PackagingState,
 )
+from app.database import helpers
 
 food_category_schema = create_schema({
   'name': str,
@@ -68,21 +69,22 @@ def food_kind(kind_id=''):
       res.data = [x.full_dict() for x in FoodKind.query.all()]
     elif request.method == 'POST':
       body = should_look_like(food_kind_schema)
-      print(body)
       food_kind = FoodKind(**body)
       food_kind.save()
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(food_kind_schema)
-      print(body)
       food_kind = FoodKind.query.get_or_404(kind_id)
       food_kind.update_name(body['name'])
       food_kind.units_of_measurement_id = body['units_of_measurement_id']
       food_kind.units_to_serving_size = body['units_to_serving_size']
       food_kind.save()
     elif request.method == 'DELETE':
-      food_kind = FoodKind.query.get_or_404(kind_id)
-      food_kind.delete()
+      msg, status = helpers.delete_food_kind(kind_id=kind_id,
+                              user_id=get_jwt_identity(),
+                              force=request.args.get('force', False))
+      res.pub_msg = msg
+      res.status = status
   except HTTPException as exc:
     return exc
   except BaseException as exc:

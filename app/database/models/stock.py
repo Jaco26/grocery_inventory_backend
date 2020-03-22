@@ -14,6 +14,10 @@ class Stock(TimestampMixin, UserDefinedNameMixin, db.Model):
 
   # represents the 'food_item's in a 'stock'
   food_items = db.relationship('FoodItem', lazy='joined')
+
+  def __init__(self, **kwargs):
+    super(Stock, self).__init__(**kwargs)
+    self.user_id = kwargs.get('user_id')
     
   def full_dict(self):
     return {
