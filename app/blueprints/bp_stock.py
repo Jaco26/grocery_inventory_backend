@@ -39,7 +39,6 @@ def stock(stock_id=''):
         res.data = [s.full_dict() for s in Stock.query.filter_by(user_id=get_jwt_identity()).all()]
     elif request.method == 'POST':
       body = should_look_like(stock_schema)
-      body.update({ 'uniform_name': uniform_name(body['name']) })
       stock = Stock(user_id=get_jwt_identity(), **body)
       stock.save()
       res.status = 201
@@ -47,8 +46,7 @@ def stock(stock_id=''):
       body = should_look_like(stock_schema)
       body.update({ 'uniform_name': uniform_name(body['name']) })
       stock = Stock.query.get_or_404(stock_id)
-      stock.name = body['name']
-      stock.uniform_name = body['uniform_name']
+      stock.update_name(body['name'])
       stock.save()
       res.status = 201
     elif request.method == 'DELETE':
@@ -57,6 +55,7 @@ def stock(stock_id=''):
   except HTTPException as exc:
     return exc
   except BaseException as exc:
+    print(exc)
     abort(500)
   return res
 

@@ -10,6 +10,10 @@ class UserDefinedNameMixin:
   name = db.Column(db.String, nullable=False)
   uniform_name = db.Column(db.String, nullable=False, unique=True)
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, **kwargs):
     self.name = kwargs.get('name')
     self.uniform_name = uniform_name(kwargs.get('name'))
+
+  def update_name(self, name):
+    self.name = name
+    self.uniform_name = uniform_name(name)

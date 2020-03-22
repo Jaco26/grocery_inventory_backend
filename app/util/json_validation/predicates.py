@@ -7,4 +7,6 @@ def is_email(val):
   raise ValueError
 
 def is_uuid(val):
-  return str(uuid.UUID(val))
+  if val:
+    return uuid.UUID(val)
+  return None

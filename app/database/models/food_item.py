@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 from sqlalchemy.dialects.postgresql import UUID, DATE
 
 from app.database.db import db
@@ -20,9 +20,9 @@ class FoodItem(TimestampMixin, db.Model):
   food_kind = db.relationship('FoodKind', lazy='joined')
 
   def full_dict(self):
+    current_state = self.states.order_by(text('date_created desc')).first()
     return {
       **self.cols_dict(),
       'food_kind': self.food_kind,
-      'current_state': self.states.order_by('date_created desc').first(),
-      'states': [s.full_dict() for s in self.states.all()]
+      'current_state': current_state.full_dict() if current_state else None,
     }

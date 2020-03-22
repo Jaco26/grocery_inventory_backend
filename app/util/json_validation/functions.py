@@ -1,6 +1,11 @@
 from flask import request
 from voluptuous import Schema, Required, REMOVE_EXTRA
 
+# NOTE:
+# When using Required(field_name, default=<something>): predicate
+# The value assigned to `default` is passed to the predicate if there is no value
+# associated with `field_name` in the source
+
 def create_schema(template_dict):
   accum = {}
   for key in template_dict:

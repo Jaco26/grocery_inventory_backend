@@ -22,7 +22,6 @@ def food_item_state():
   res = ApiResponse()
   try:
     body = should_look_like(food_item_state_schema)
-    pprint(body)
     food_item_state = FoodItemState(**body)
     food_item_state.save()
     res.status = 201
