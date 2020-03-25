@@ -70,15 +70,20 @@ def food_kind(kind_id=''):
     elif request.method == 'POST':
       body = should_look_like(food_kind_schema)
       food_kind = FoodKind(**body)
+      food_kind.user_id = get_jwt_identity()
       food_kind.save()
       res.status = 201
     elif request.method == 'PUT':
       body = should_look_like(food_kind_schema)
       food_kind = FoodKind.query.get_or_404(kind_id)
-      food_kind.update_name(body['name'])
-      food_kind.units_of_measurement_id = body['units_of_measurement_id']
-      food_kind.units_to_serving_size = body['units_to_serving_size']
-      food_kind.save()
+      if food_kind.user_id != get_jwt_identity():
+        res.status = 401
+        res.pub_msg = 'You do not have permission to update this "food kind"'
+      else:
+        food_kind.update_name(body['name'])
+        food_kind.units_of_measurement_id = body['units_of_measurement_id']
+        food_kind.units_to_serving_size = body['units_to_serving_size']
+        food_kind.save()
     elif request.method == 'DELETE':
       msg, status = helpers.delete_food_kind(kind_id=kind_id,
                               user_id=get_jwt_identity(),

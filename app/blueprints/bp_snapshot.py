@@ -9,7 +9,7 @@ from app.util.json_validation import (
   is_uuid,
 )
 
-from app.database.models import Stock, Snapshot, FoodItemState
+from app.database.models import Stock, Snapshot, StockItemState
 
 snapshot_bp = Blueprint('snapshot_bp', __name__)
 
@@ -27,7 +27,7 @@ def create_snapshot():
     if stock.user_id == get_jwt_identity():
       snapshot = Snapshot(**body)
       for food_item in stock.food_items:
-        state = food_item.states.order_by(desc(FoodItemState.date_created)).first()
+        state = food_item.states.order_by(desc(StockItemState.date_created)).first()
         snapshot.food_item_states.append(state)
       snapshot.save()
       res.status = 201

@@ -8,7 +8,7 @@ from app.util.json_validation import (
   should_look_like,
   Date
 )
-from app.database.models import Stock, FoodItem
+from app.database.models import Stock, StockItem
 
 stock_schema = create_schema({
   'name': str,
@@ -68,14 +68,14 @@ def stock_item(stock_id='', item_id=''):
       body = should_look_like(food_item_schema)
       stock = Stock.query.get_or_404(stock_id)
       if str(stock.user_id) == get_jwt_identity():
-        food_item = FoodItem(**{ 'stock_id': stock_id, **body })
+        food_item = StockItem(**{ 'stock_id': stock_id, **body })
         food_item.save()
         res.status = 201
       else:
         res.status = 401
         res.pub_msg = 'You do not have permission to add items to this stock'
     elif request.method == 'DELETE':
-      food_item = FoodItem.query.get_or_404(item_id)
+      food_item = StockItem.query.get_or_404(item_id)
       food_item.delete()
   except HTTPException as exc:
     return exc

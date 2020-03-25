@@ -4,8 +4,8 @@ from app.database.db import db
 from app.database.mixins import TimestampMixin
 
 
-class FoodItemState(TimestampMixin, db.Model):
-  food_item_id = db.Column(UUID(as_uuid=True), db.ForeignKey('food_item.id'))
+class StockItemState(TimestampMixin, db.Model):
+  stock_item_id = db.Column(UUID(as_uuid=True), db.ForeignKey('stock_item.id'))
   packaging_kind_id = db.Column(UUID(as_uuid=True), db.ForeignKey('packaging_kind.id'))
   packaging_state_id = db.Column(UUID(as_uuid=True), db.ForeignKey('packaging_state.id'))
   quantity = db.Column(db.Integer, default=0)

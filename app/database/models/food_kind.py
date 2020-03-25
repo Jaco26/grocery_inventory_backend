@@ -5,7 +5,7 @@ from app.database.mixins import BaseMixin, UserDefinedNameMixin
 
 
 # For things like eggs (I have 3 eggs)
-UNIT_OF_MEASURE_IS_SELF_ID = '0b5c009b-fb3f-4642-a177-71c31f557d27'
+UNIT_OF_MEASURE_IS_SELF_ID = '535207ef-62a7-446e-a7ee-abef66353eb9'
 
 class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))
@@ -16,12 +16,13 @@ class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
   nutrition_info = db.relationship('FoodKindNutritionInfo', lazy='joined', uselist=False)
   categories = db.relationship('FoodCategory', secondary='food_kind_category', lazy='subquery',
                               backref=db.backref('food_kinds', lazy=True))
-  food_items = db.relationship('FoodItem', lazy=True)
+  stock_items = db.relationship('StockItem', lazy=True)
 
   def full_dict(self):
+    remove = ['unit_of_measurement_id']
     return {
-      **self.cols_dict(),
-      'unit_of_measurement': self.unit_of_measurement.name,
+      **{ key: getattr(self, key) for key in self.cols_dict().keys() if key not in remove },
+      'unit_of_measurement': self.unit_of_measurement,
       'categories': self.categories,
       'nutrition_info': self.nutrition_info
     }
