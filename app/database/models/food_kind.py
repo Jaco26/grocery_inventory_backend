@@ -24,5 +24,5 @@ class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
       **{ key: getattr(self, key) for key in self.cols_dict().keys() if key not in remove },
       'unit_of_measurement': self.unit_of_measurement,
       'categories': self.categories,
-      'nutrition_info': self.nutrition_info
+      'nutrition_info': self.nutrition_info or {}
     }

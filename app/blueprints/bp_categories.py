@@ -2,7 +2,7 @@ from flask import Blueprint, request, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.exceptions import HTTPException
 from app.util import ApiResponse, uniform_name
-from app.util.json_validation import create_schema, should_look_like, is_uuid
+from app.util.json_validation import create_schema, should_look_like, is_uuid, Coerce
 from app.database.models import (
   FoodCategory,
   FoodKind,
@@ -17,8 +17,8 @@ food_category_schema = create_schema({
 
 food_kind_schema = create_schema({
   'name': str,
-  'units_of_measurement_id': is_uuid,
-  ('units_to_serving_size', 0): int,
+  'unit_of_measurement_id': is_uuid,
+  ('units_to_serving_size', 0): Coerce(int),
 })
 
 packaging_kind_schema = create_schema({
@@ -76,13 +76,14 @@ def food_kind(kind_id=''):
     elif request.method == 'PUT':
       body = should_look_like(food_kind_schema)
       food_kind = FoodKind.query.get_or_404(kind_id)
-      if food_kind.user_id != get_jwt_identity():
+      if str(food_kind.user_id) != get_jwt_identity():
         res.status = 401
         res.pub_msg = 'You do not have permission to update this "food kind"'
       else:
         food_kind.update_name(body['name'])
-        food_kind.units_of_measurement_id = body['units_of_measurement_id']
+        food_kind.unit_of_measurement_id = body['unit_of_measurement_id']
         food_kind.units_to_serving_size = body['units_to_serving_size']
+        print(food_kind.unit_of_measurement_id)
         food_kind.save()
     elif request.method == 'DELETE':
       msg, status = helpers.delete_food_kind(kind_id=kind_id,
@@ -91,6 +92,7 @@ def food_kind(kind_id=''):
       res.pub_msg = msg
       res.status = status
   except HTTPException as exc:
+    print(str(exc))
     return exc
   except BaseException as exc:
     print(exc)

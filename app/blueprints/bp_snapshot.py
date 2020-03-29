@@ -26,7 +26,7 @@ def create_snapshot():
     stock = Stock.query.get_or_404(body['stock_id'])
     if stock.user_id == get_jwt_identity():
       snapshot = Snapshot(**body)
-      for food_item in stock.food_items:
+      for food_item in stock.stock_items:
         state = food_item.states.order_by(desc(StockItemState.date_created)).first()
         snapshot.food_item_states.append(state)
       snapshot.save()

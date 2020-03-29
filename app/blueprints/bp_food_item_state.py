@@ -9,7 +9,7 @@ from app.database.models import StockItemState
 food_item_state_bp = Blueprint('food_item_state', __name__)
 
 food_item_state_schema = create_schema({
-  'food_item_id': is_uuid,
+  'stock_item_id': is_uuid,
   'packaging_kind_id': is_uuid,
   'packaging_state_id': is_uuid,
   'quantity': int

@@ -1,9 +1,10 @@
 from app.database.models import FoodKind, StockItem, Stock
 
 def delete_food_kind(kind_id='', user_id='', force=False):
+
   food_kind = FoodKind.query.get_or_404(kind_id)
 
-  if food_kind.user_id != user_id:
+  if str(food_kind.user_id) != str(user_id):
     return 'You do not have permission to delete this "food kind"', 401
   # do any StockItems of this FoodKind exist in any stocks associated with this user?
   user_stocks = Stock.query.filter_by(user_id=user_id).all()

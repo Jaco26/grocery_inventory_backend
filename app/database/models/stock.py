@@ -13,7 +13,7 @@ class Stock(TimestampMixin, UserDefinedNameMixin, db.Model):
                               backref=db.backref('stock', lazy=True))
 
   # represents the 'food_item's in a 'stock'
-  food_items = db.relationship('StockItem', lazy='joined')
+  stock_items = db.relationship('StockItem', lazy='joined')
 
   def __init__(self, **kwargs):
     super(Stock, self).__init__(**kwargs)
@@ -23,5 +23,5 @@ class Stock(TimestampMixin, UserDefinedNameMixin, db.Model):
     return {
       **self.cols_dict(),
       'snapshots': [s for s in self.snapshots.all()],
-      'items': [item.full_dict() for item in self.food_items]
+      'items': [item.full_dict() for item in self.stock_items]
     }

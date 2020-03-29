@@ -11,6 +11,7 @@ from app.blueprints import (
   food_item_state_bp,
   stock_bp,
   snapshot_bp,
+  unit_of_measure_bp,
 )
 
 def create_app(config=None):
@@ -27,6 +28,7 @@ def create_app(config=None):
   app.register_blueprint(food_item_state_bp, url_prefix='/api/v1/food_item_state')
   app.register_blueprint(stock_bp, url_prefix='/api/v1/stock')
   app.register_blueprint(snapshot_bp, url_prefix='/api/v1/snapshot')
+  app.register_blueprint(unit_of_measure_bp, url_prefix='/api/v1/unit_of_measure')
 
   @app.route('/', defaults={'path': ''})
   @app.route('/<path:path>')
