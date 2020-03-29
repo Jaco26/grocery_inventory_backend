@@ -18,7 +18,7 @@ food_category_schema = create_schema({
 food_kind_schema = create_schema({
   'name': str,
   'unit_of_measurement_id': is_uuid,
-  ('units_to_serving_size', 0): Coerce(int),
+  ('serving_size', 0.0): Coerce(float),
 })
 
 packaging_kind_schema = create_schema({
@@ -82,7 +82,7 @@ def food_kind(kind_id=''):
       else:
         food_kind.update_name(body['name'])
         food_kind.unit_of_measurement_id = body['unit_of_measurement_id']
-        food_kind.units_to_serving_size = body['units_to_serving_size']
+        food_kind.serving_size = body['serving_size']
         print(food_kind.unit_of_measurement_id)
         food_kind.save()
     elif request.method == 'DELETE':

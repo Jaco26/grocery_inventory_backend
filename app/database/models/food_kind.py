@@ -10,7 +10,7 @@ UNIT_OF_MEASURE_IS_SELF_ID = '535207ef-62a7-446e-a7ee-abef66353eb9'
 class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))
   unit_of_measurement_id = db.Column(UUID(as_uuid=True), db.ForeignKey('unit_of_measurement.id'), default=UNIT_OF_MEASURE_IS_SELF_ID)
-  units_to_serving_size = db.Column(db.Integer, default=0)
+  serving_size = db.Column(db.Float, default=0.0)
 
   unit_of_measurement = db.relationship('UnitOfMeasurement', lazy='joined')
   nutrition_info = db.relationship('FoodKindNutritionInfo', lazy='joined', uselist=False)
