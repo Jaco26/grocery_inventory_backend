@@ -14,6 +14,10 @@ from app.blueprints import (
   unit_of_measure_bp,
 )
 
+import dotenv
+
+dotenv.load_dotenv()
+
 def create_app(config=None):
   app = JSONFlask(__name__)
   if config:

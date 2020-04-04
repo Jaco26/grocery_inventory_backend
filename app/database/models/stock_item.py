@@ -23,6 +23,6 @@ class StockItem(TimestampMixin, db.Model):
     current_state = self.states.order_by(text('date_created desc')).first()
     return {
       **self.cols_dict(),
-      'food_kind': self.food_kind,
+      'food_kind': self.food_kind.full_dict(),
       'current_state': current_state.full_dict() if current_state else None,
     }

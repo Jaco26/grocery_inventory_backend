@@ -60,13 +60,16 @@ def food_category(category_id=''):
 
 
 @categories_bp.route('/food/kind', methods=['GET', 'POST'])
-@categories_bp.route('/food/kind/<kind_id>', methods=['PUT', 'DELETE'])
+@categories_bp.route('/food/kind/<kind_id>', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required
 def food_kind(kind_id=''):
   res = ApiResponse()
   try:
     if request.method == 'GET':
-      res.data = [x.full_dict() for x in FoodKind.query.all()]
+      if kind_id:
+        res.data = FoodKind.query.get_or_404(kind_id).full_dict()
+      else:
+        res.data = [x.full_dict() for x in FoodKind.query.all()]
     elif request.method == 'POST':
       body = should_look_like(food_kind_schema)
       food_kind = FoodKind(**body)

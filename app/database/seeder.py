@@ -32,6 +32,7 @@ def seed_db():
     UnitOfMeasurement(name="Self"),
     UnitOfMeasurement(name="Fluid Oz"),
     UnitOfMeasurement(name="Oz"),
+    UnitOfMeasurement(name="Cup"),
   ])
 
   db.session.commit()
