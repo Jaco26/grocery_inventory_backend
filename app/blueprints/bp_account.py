@@ -1,12 +1,20 @@
+from datetime import timedelta
 from flask import Blueprint, request, abort
-from flask_jwt_extended import jwt_required, create_access_token, get_raw_jwt
+from flask_jwt_extended import (
+  jwt_required,
+  jwt_refresh_token_required,
+  create_access_token,
+  create_refresh_token,
+  get_raw_jwt,
+  get_jwt_identity,
+)
 from werkzeug.exceptions import HTTPException
 from app.util import ApiResponse
 from app.util.json_validation import create_schema, should_look_like
 from app.database.models import AppUser, RevokedToken
 
 user_credentials_schema = create_schema({
-  ('username', ''): str,
+  ('email', ''): str,
   ('password', ''): str,
 })
 
@@ -17,11 +25,11 @@ def register():
   res = ApiResponse()
   try:
     body = should_look_like(user_credentials_schema)
-    if AppUser.get_by_username(body['username']):
+    if AppUser.get_by_email(body['email']):
       res.status = 400
-      res.pub_msg = 'Username {} already exists in our system'.format(body['username'])
+      res.pub_msg = 'Email {} already exists in our system'.format(body['email'])
     else:
-      AppUser(username=body['username'], pw_hash=body['password']).save()
+      AppUser(email=body['email'], pw_hash=body['password']).save()
       res.status = 201
   except HTTPException as exc:
     return exc
@@ -35,16 +43,49 @@ def login():
   res = ApiResponse()
   try:
     body = should_look_like(user_credentials_schema)
-    app_user = AppUser.get_by_username(body['username'])
+    app_user = AppUser.get_by_email(body['email'])
     if app_user:
       res.data = {
-        'username': app_user.username,
-        'access_token': create_access_token(identity=app_user.id, expires_delta=False)
+        'email': app_user.email,
+        'refresh_token': create_refresh_token(identity=app_user.id, expires_delta=timedelta(days=1)),
+        'access_token': create_access_token(identity=app_user.id,
+                                            user_claims={ 'email': app_user.email },
+                                            expires_delta=timedelta(hours=1)),
       }
       res.status = 200
     else:
       res.status = 401
-      res.pub_msg = 'Username or password was not recognized'
+      res.pub_msg = 'Email or password was not recognized'
+  except HTTPException as exc:
+    return exc
+  except BaseException as exc:
+    abort(500)
+  return res
+
+@account_bp.route('/refresh-access', methods=['POST'])
+@jwt_refresh_token_required
+def refresh_access():
+  res = ApiResponse()
+  try:
+    app_user = AppUser.query.get(get_jwt_identity())
+    res.data = create_access_token(identity=app_user.id,
+                                  user_claims={ 'email': app_user.email },
+                                  expires_delta=timedelta(hours=1))
+  except HTTPException as exc:
+    return exc
+  except:
+    abort(500)
+  return res
+
+
+
+@account_bp.route('/logout-access', methods=['POST'])
+@jwt_required
+def logout_access():
+  res = ApiResponse()
+  try:
+    revoked_token = RevokedToken(jti=get_raw_jwt()['jti'])
+    revoked_token.save()
   except HTTPException as exc:
     return exc
   except BaseException as exc:
@@ -52,9 +93,9 @@ def login():
   return res
 
 
-@account_bp.route('/logout', methods=['POST'])
-@jwt_required
-def logout():
+@account_bp.route('/logout-refresh', methods=['POST'])
+@jwt_refresh_token_required
+def logout_refresh():
   res = ApiResponse()
   try:
     revoked_token = RevokedToken(jti=get_raw_jwt()['jti'])

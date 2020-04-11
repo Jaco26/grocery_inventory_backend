@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c332ef6a2cf3
+Revision ID: 5fd6090bc00f
 Revises: 
-Create Date: 2020-03-24 20:19:21.943710
+Create Date: 2020-04-11 13:07:05.578873
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'c332ef6a2cf3'
+revision = '5fd6090bc00f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,10 +22,10 @@ def upgrade():
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('date_created', postgresql.TIMESTAMP(timezone=True), nullable=True),
     sa.Column('date_updated', postgresql.TIMESTAMP(timezone=True), nullable=True),
-    sa.Column('username', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
     sa.Column('pw_hash', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('username')
+    sa.UniqueConstraint('email')
     )
     op.create_table('food_category',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
@@ -65,7 +65,7 @@ def upgrade():
     sa.Column('uniform_name', sa.String(), nullable=False),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('unit_of_measurement_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('units_to_serving_size', sa.Integer(), nullable=True),
+    sa.Column('serving_size', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['unit_of_measurement_id'], ['unit_of_measurement.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['app_user.id'], ),
     sa.PrimaryKeyConstraint('id'),

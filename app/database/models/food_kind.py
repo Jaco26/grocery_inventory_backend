@@ -5,7 +5,7 @@ from app.database.mixins import BaseMixin, UserDefinedNameMixin
 
 
 # For things like eggs (I have 3 eggs)
-UNIT_OF_MEASURE_IS_SELF_ID = '535207ef-62a7-446e-a7ee-abef66353eb9'
+UNIT_OF_MEASURE_IS_SELF_ID = '2840f6fc-f79f-4168-981d-c6a1fda61d7e'
 
 class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))

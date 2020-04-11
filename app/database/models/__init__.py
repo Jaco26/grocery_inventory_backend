@@ -1,4 +1,4 @@
-from .user import AppUser
+from .app_user import AppUser
 from .stock import Stock
 from .snapshot import Snapshot
 from .packaging_state import PackagingState
