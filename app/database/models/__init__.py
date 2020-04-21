@@ -9,5 +9,6 @@ from .stock_item import StockItem
 from .stock_item_state import StockItemState
 from .food_category import FoodCategory
 from .unit_of_measurement import UnitOfMeasurement
+from .pw_reset_email import PwResetEmail
 
 from .revoked_token import RevokedToken

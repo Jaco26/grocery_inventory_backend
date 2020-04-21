@@ -22,6 +22,12 @@ def create_schema(template_dict):
 
 
 def should_look_like(schema_func, source=None):
+  '''
+  :schema_func: a [voluptuous](https://github.com/alecthomas/voluptuous) dictionary `Schema`
+
+  :source: A `dict` (or dict-like value) that will be validated against the `schema_func`. If no value is passed, 
+  the value returned from `request.get_json()` will be used.
+  '''
   if not source:
     source = request.get_json()
   return schema_func(dict(source))

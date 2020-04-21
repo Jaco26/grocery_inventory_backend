@@ -1,5 +1,5 @@
 from flask_cors import CORS
-from app.extensions import JSONFlask, db, jwt, cors
+from app.extensions import JSONFlask, db, jwt, cors, mail
 from app.util import ApiResponse
 
 from app.database.models import *
@@ -26,6 +26,7 @@ def create_app(config=None):
   db.init_app(app)
   jwt.init_app(app)
   cors.init_app(app)
+  mail.init_app(app)
 
   app.register_blueprint(account_bp, url_prefix='/api/v1/account')
   app.register_blueprint(categories_bp, url_prefix='/api/v1/categories')
