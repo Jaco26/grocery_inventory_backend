@@ -1,3 +1,4 @@
+import os
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.database.db import db
@@ -5,7 +6,7 @@ from app.database.mixins import BaseMixin, UserDefinedNameMixin
 
 
 # For things like eggs (I have 3 eggs)
-UNIT_OF_MEASURE_IS_SELF_ID = '2840f6fc-f79f-4168-981d-c6a1fda61d7e'
+UNIT_OF_MEASURE_IS_SELF_ID = os.environ.get('UNIT_OF_MEASURE_IS_SELF_ID')
 
 class FoodKind(BaseMixin, UserDefinedNameMixin, db.Model):
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('app_user.id'))
