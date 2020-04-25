@@ -109,6 +109,7 @@ def send_reset_link():
 
       fresh_jwt = create_access_token(pw_reset_email.nonce,
                                       fresh=True,
+                                      user_claims={ 'email': body['email'] },
                                       expires_delta=timedelta(minutes=30))
 
       client_host = os.getenv('CLIENT_HOST')
@@ -119,6 +120,7 @@ def send_reset_link():
                         html=render_template('password_reset_email.html', nonced_link=nonced_link))
     res.status = 201
   except HTTPException as exc:
+    print(exc)
     return exc
   except BaseException as exc:
     abort(500)

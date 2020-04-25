@@ -8,7 +8,7 @@ def uniform_name(name):
 
 class UserDefinedNameMixin:
   name = db.Column(db.String, nullable=False)
-  uniform_name = db.Column(db.String, nullable=False, unique=True)
+  uniform_name = db.Column(db.String, nullable=False)
 
   def __init__(self, **kwargs):
     self.name = kwargs.get('name')

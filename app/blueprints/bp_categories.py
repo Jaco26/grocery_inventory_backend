@@ -69,7 +69,7 @@ def food_kind(kind_id=''):
       if kind_id:
         res.data = FoodKind.query.get_or_404(kind_id).full_dict()
       else:
-        res.data = [x.full_dict() for x in FoodKind.query.all()]
+        res.data = [x.full_dict() for x in FoodKind.query.filter_by(user_id=get_jwt_identity()).all()]
     elif request.method == 'POST':
       body = should_look_like(food_kind_schema)
       food_kind = FoodKind(**body)
