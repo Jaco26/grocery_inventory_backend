@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import timedelta
 from passlib.hash import pbkdf2_sha256
 from flask import Blueprint, request, abort, render_template
@@ -119,10 +120,12 @@ def send_reset_link():
                         recipients=[body['email']],
                         html=render_template('password_reset_email.html', nonced_link=nonced_link))
     res.status = 201
+    res.pub_msg = 'If the email address you provided us is in our system you should recieve an email with a link to reset your password.'
   except HTTPException as exc:
     print(exc)
     return exc
   except BaseException as exc:
+    print(exc)
     abort(500)
   return res
 
@@ -135,11 +138,15 @@ def reset_password():
     body = should_look_like(pw_reset_schema)
     nonce = get_jwt_identity()
     pw_reset_email = PwResetEmail.query.get(nonce)
-    app_user = AppUser.query.get(pw_reset_email.user_id)
-    app_user.pw_hash = pbkdf2_sha256.hash(body['password'])
-    app_user.save()
-    pw_reset_email.delete()
-    res.status = 200
+    if pw_reset_email:
+      app_user = AppUser.query.get(pw_reset_email.user_id)
+      app_user.pw_hash = pbkdf2_sha256.hash(body['password'])
+      app_user.save()
+      pw_reset_email.delete()
+      res.status = 200
+    else:
+      res.status = 400
+      res.pub_msg = 'This link has expired.'
   except HTTPException as exc:
     print(exc)
     return exc
